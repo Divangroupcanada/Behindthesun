@@ -2,36 +2,33 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Behind the Sun — A thoughtful home for the world's oldest questions",
+  title: "پشت خورشید — طالع‌بینی، تاروت، فال حافظ و اعداد",
   description:
-    "Astrology, tarot, Persian poetry, and numerology. Real charts, real verses, real sources. Reflection, not prophecy.",
+    "چارت تولد واقعی، غزل اصل حافظ، و فال تاروت — به فارسی، با منبع و محاسبه‌ی قابل بررسی. ساخته‌شده در تورنتو برای فارسی‌زبانان سراسر جهان.",
   keywords: [
-    "astrology",
-    "tarot",
-    "hafez",
-    "numerology",
-    "birth chart",
-    "fal e hafez",
-    "persian poetry",
-    "natal chart",
+    "طالع بینی فارسی", "فال حافظ", "چارت تولد", "فال تاروت",
+    "اعداد شناسی", "هوروسکوپ فارسی", "آسترولوژی",
   ],
-  authors: [{ name: "Raz" }],
   openGraph: {
-    title: "Behind the Sun — A thoughtful home for the world's oldest questions",
+    title: "پشت خورشید — طالع‌بینی، تاروت، فال حافظ و اعداد",
     description:
-      "Astrology, tarot, Persian poetry, and numerology. Sources cited, math shown, privacy first.",
+      "چارت تولد واقعی، غزل اصل حافظ، و فال تاروت — به فارسی، با منبع و محاسبه‌ی قابل بررسی.",
+    locale: "fa_IR",
     type: "website",
-    locale: "en_US",
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="fa" dir="rtl">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

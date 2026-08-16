@@ -1,271 +1,259 @@
 import Link from "next/link";
-import { Sparkles, Circle, BookOpen, Hash, Check, MapPin, ShieldCheck, Eye } from "lucide-react";
+import { Circle, BookOpen, Sparkles, Hash, Eye, ShieldCheck, Check, MapPin } from "lucide-react";
+import Starfield from "@/components/Starfield";
+import ZodiacWheel from "@/components/ZodiacWheel";
+import Orbits from "@/components/Orbits";
+import Reveal from "@/components/Reveal";
+import BirthWizard from "@/components/BirthWizard";
+import TarotFlip from "@/components/TarotFlip";
+import MoonPhases from "@/components/MoonPhases";
+import { faNum } from "@/lib/astro";
 
-/* ── Persian digit helper ───────────────────────────── */
-const fa = (s: string | number) =>
-  String(s).replace(/[0-9]/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[+d]);
-
-/* ── Data ───────────────────────────────────────────── */
-const doors = [
-  {
-    icon: <Circle className="h-5 w-5 text-gold" />,
-    title: "چارت تولد",
-    body: "نقشه‌ی کامل آسمان لحظه‌ی تولدت — همه‌ی سیارات، خانه‌ها و زوایا. سیستم خانه‌ی پلاسیدوس.",
-    meta: `${fa(3)} دقیقه · تاریخ، ساعت و شهر تولد`,
-    href: "/astrology/birth-chart",
-  },
-  {
-    icon: <BookOpen className="h-5 w-5 text-gold" />,
-    title: "فال حافظ",
-    body: "غزلی از دیوان حافظ، با متن اصل و تفسیر. نه ترجمه‌ی ماشینی — نسخه‌ی قزوینی-غنی.",
-    meta: `${fa(90)} ثانیه · فقط یک نیت`,
-    href: "/hafez",
-  },
-  {
-    icon: <Sparkles className="h-5 w-5 text-gold" />,
-    title: "فال تاروت",
-    body: "کارتی از دسته‌ی رایدر-ویت-اسمیت، با تاریخچه، نمادشناسی و پرسش‌هایی برای تأمل.",
-    meta: `${fa(2)} دقیقه · بدون نیاز به اطلاعات`,
-    href: "/tarot/daily",
-  },
-  {
-    icon: <Hash className="h-5 w-5 text-gold" />,
-    title: "عدد مسیر زندگی",
-    body: "عددت بر پایه‌ی تقلیل فیثاغورثی، همراه با تفسیر کلاسیک و توضیح روش محاسبه.",
-    meta: `${fa(60)} ثانیه · فقط تاریخ تولد`,
-    href: "/numerology/life-path",
-  },
+const DOORS = [
+  { icon: Circle, t: "چارت تولد", d: "نقشه‌ی کامل آسمان لحظه‌ی تولدت — همه‌ی سیارات، خانه‌ها و زوایا.", m: `${faNum(3)} دقیقه`, href: "/astrology/birth-chart" },
+  { icon: BookOpen, t: "فال حافظ", d: "غزلی از دیوان حافظ با متن اصل و تفسیر — نسخه‌ی قزوینی‌-غنی.", m: `${faNum(90)} ثانیه`, href: "/hafez" },
+  { icon: Sparkles, t: "فال تاروت", d: "کارتی از دسته‌ی رایدر-ویت-اسمیت، با نمادشناسی و پرسش‌های تأمل.", m: `${faNum(2)} دقیقه`, href: "/tarot/daily" },
+  { icon: Hash, t: "عدد مسیر زندگی", d: "عددت بر پایه‌ی تقلیل فیثاغورثی، با توضیح کاملِ روش محاسبه.", m: `${faNum(60)} ثانیه`, href: "/numerology/life-path" },
 ];
 
-const sky = [
-  { p: "خورشید", s: "اسد" },
-  { p: "ماه", s: "میزان" },
-  { p: "عطارد", s: "اسد" },
-  { p: "زهره", s: "میزان" },
-  { p: "مریخ", s: "سرطان" },
-  { p: "مشتری", s: "اسد" },
+const SKY = [
+  { p: "خورشید", s: "اسد", g: "☀" }, { p: "ماه", s: "میزان", g: "☾" },
+  { p: "عطارد", s: "اسد", g: "☿" }, { p: "زهره", s: "میزان", g: "♀" },
+  { p: "مریخ", s: "سرطان", g: "♂" }, { p: "مشتری", s: "اسد", g: "♃" },
+  { p: "زحل", s: "حمل", g: "♄" },
 ];
 
-const promises = [
-  { icon: <Eye className="h-4 w-4" />, t: "محاسبه را نشان می‌دهیم", d: "هر عدد و هر درجه، با روش و منبعش." },
-  { icon: <BookOpen className="h-4 w-4" />, t: "متن اصل، نه بازنویسی", d: "غزل‌های حافظ از نسخه‌ی قزوینی-غنی." },
-  { icon: <ShieldCheck className="h-4 w-4" />, t: "داده‌ات فروخته نمی‌شود", d: "بدون شماره تلفن، بدون فروش اطلاعات." },
-  { icon: <Check className="h-4 w-4" />, t: "تأمل، نه پیشگویی", d: "ابزار خودشناسی‌ست، نه ادعای آینده." },
+const PROMISES = [
+  { i: Eye, t: "محاسبه را نشان می‌دهیم", d: "هر درجه و هر عدد، همراه با روش و منبعش." },
+  { i: BookOpen, t: "متن اصل، نه بازنویسی", d: "غزل‌های حافظ از نسخه‌ی قزوینی-غنی، بی‌دست‌کاری." },
+  { i: ShieldCheck, t: "داده‌ات فروخته نمی‌شود", d: "بدون شماره تلفن، بدون فروش اطلاعات، هیچ‌وقت." },
+  { i: Check, t: "تأمل، نه پیشگویی", d: "ابزار خودشناسی‌ست — ادعای دانستن آینده نداریم." },
 ];
 
-/* ── Page ───────────────────────────────────────────── */
-export default function HomePage() {
+export default function Home() {
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-border bg-paper/85 backdrop-blur">
+    <div className="relative min-h-screen overflow-hidden bg-night text-cream">
+      {/* ambient wash */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,#2B1B3D_0%,#15102A_38%,#0E0816_72%)]" />
+
+      {/* ── NAV ── */}
+      <nav className="sticky top-0 z-50 border-b border-white/[.07] bg-night/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <div className="flex items-center gap-9">
-            <Link href="/" className="flex shrink-0 items-center gap-2.5">
-              <div className="relative h-6 w-6 rounded-full border-[1.5px] border-ink">
-                <div className="absolute right-[5px] top-[6px] h-[11px] w-[11px] rounded-full bg-gold" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">پشت خورشید</span>
-            </Link>
-            <div className="hidden gap-7 text-sm text-ink-muted md:flex">
-              <Link href="/astrology" className="transition-colors hover:text-ink">طالع‌بینی</Link>
-              <Link href="/hafez" className="transition-colors hover:text-ink">فال حافظ</Link>
-              <Link href="/tarot" className="transition-colors hover:text-ink">تاروت</Link>
-              <Link href="/numerology" className="transition-colors hover:text-ink">اعداد</Link>
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <div className="relative h-7 w-7 rounded-full border border-gold/70">
+              <div className="absolute right-[6px] top-[7px] h-3 w-3 rounded-full bg-gold halo" />
             </div>
+            <span className="text-lg font-extrabold tracking-tight">پشت خورشید</span>
+          </Link>
+          <div className="hidden gap-7 text-sm text-cream/55 md:flex">
+            {[["طالع‌بینی","/astrology"],["فال حافظ","/hafez"],["تاروت","/tarot"],["اعداد","/numerology"]].map(([t,h]) => (
+              <Link key={h} href={h} className="transition-colors hover:text-gold">{t}</Link>
+            ))}
           </div>
-          <div className="flex shrink-0 items-center gap-3">
-            <Link href="/sign-in" className="hidden text-sm text-ink-muted hover:text-ink md:block">ورود</Link>
-            <Link
-              href="/sign-up"
-              className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink/90"
-            >
-              شروع کن
-            </Link>
-          </div>
+          <Link href="/sign-up" className="shrink-0 rounded-lg bg-gradient-to-l from-gold to-pale-gold px-4 py-2 text-sm font-bold text-night transition-transform hover:scale-105">
+            شروع کن
+          </Link>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="mx-auto max-w-3xl px-6 pb-16 pt-20 text-center">
-        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-border bg-paper-2 px-3.5 py-1.5 text-xs text-ink-muted">
-          <MapPin className="h-3 w-3 text-gold" />
-          <span>ساخته‌شده در تورنتو — برای فارسی‌زبانان سراسر جهان</span>
+      {/* ── HERO ── */}
+      <header className="relative">
+        <Starfield count={110} />
+        <div className="pointer-events-none absolute left-1/2 top-4 w-[min(115vw,900px)] -translate-x-1/2 opacity-[.4]">
+          <ZodiacWheel className="h-auto w-full" />
         </div>
 
-        <h1 className="mb-6 text-balance text-4xl font-extrabold leading-[1.35] tracking-tight md:text-6xl md:leading-[1.25]">
-          طالع‌بینی، تاروت و <span className="text-gold">فال حافظ</span>
-          <br />
-          — این‌بار درست.
-        </h1>
+        <div className="relative mx-auto max-w-3xl px-6 pb-24 pt-24 text-center md:pt-32">
+          <div className="mb-8 inline-flex animate-fade-in items-center gap-2 rounded-full border border-gold/25 bg-gold/[.07] px-4 py-1.5 text-xs text-pale-gold backdrop-blur">
+            <MapPin className="h-3 w-3" />
+            ساخته‌شده در تورنتو — برای فارسی‌زبانان سراسر جهان
+          </div>
 
-        <p className="mx-auto mb-9 max-w-2xl text-balance text-lg leading-relaxed text-ink-muted">
-          چارت تولد واقعی. غزل اصل حافظ. دسته‌ی کامل تاروت.
-          همه به فارسی — با منبع مشخص و محاسبه‌ای که خودت می‌توانی بررسی کنی.
-        </p>
+          <h1 className="mb-7 animate-fade-up text-balance text-4xl font-extrabold leading-[1.35] tracking-tight md:text-6xl md:leading-[1.25]">
+            آسمانِ لحظه‌ای که
+            <br />
+            <span className="gold-text">به دنیا آمدی</span>
+          </h1>
 
-        <div className="mb-6 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/astrology/birth-chart"
-            className="rounded-lg bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
-          >
-            چارت تولدت را رایگان بگیر ←
-          </Link>
-          <Link
-            href="/hafez"
-            className="rounded-lg border border-border bg-white px-6 py-3.5 text-sm font-medium transition-colors hover:border-ink-muted"
-          >
-            یک فال حافظ بگیر
-          </Link>
-        </div>
-
-        <p className="text-sm text-ink-muted">
-          پلن رایگان همیشگی · بدون کارت بانکی · بدون شماره تلفن
-        </p>
-      </section>
-
-      {/* Today's sky — engagement loop */}
-      <section className="border-y border-border bg-white py-7">
-        <div className="mx-auto max-w-5xl px-6">
-          <p className="mb-4 text-center text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            امروز در آسمان
+          <p className="mx-auto mb-10 max-w-xl animate-fade-up text-balance text-base leading-loose text-cream/65 md:text-lg" style={{ animationDelay: ".12s" }}>
+            چارت واقعی، غزل اصل حافظ، دسته‌ی کامل تاروت — همه به فارسی،
+            با منبع مشخص و محاسبه‌ای که خودت می‌توانی بررسی کنی.
           </p>
+
+          <div className="animate-fade-up" style={{ animationDelay: ".24s" }}>
+            <a href="#wizard" className="inline-block rounded-xl bg-gradient-to-l from-gold to-pale-gold px-9 py-4 text-sm font-bold text-night shadow-lg transition-transform hover:scale-[1.04]">
+              چارت تولدت را رایگان ببین ←
+            </a>
+            <p className="mt-5 text-xs text-cream/40">بدون کارت بانکی · بدون شماره تلفن · {faNum(60)} ثانیه</p>
+          </div>
+        </div>
+      </header>
+
+      {/* ── TODAY'S SKY ── */}
+      <section className="relative border-y border-white/[.07] bg-white/[.02] py-6">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="mb-4 text-center text-[11px] font-bold tracking-[.25em] text-gold/70">امروز در آسمان</p>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            {sky.map((x) => (
-              <div key={x.p} className="flex items-baseline gap-1.5 text-sm">
-                <span className="font-semibold">{x.p}</span>
-                <span className="text-ink-muted">در</span>
-                <span className="text-gold">{x.s}</span>
+            {SKY.map((x) => (
+              <div key={x.p} className="flex items-baseline gap-2 text-sm">
+                <span className="text-base text-gold/80">{x.g}</span>
+                <span className="font-semibold text-cream/85">{x.p}</span>
+                <span className="text-cream/35">در</span>
+                <span className="text-pale-gold">{x.s}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Four doors */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <div className="mb-12 text-center">
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gold">چهار سنّت</p>
-            <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              هرچه لازم داری — هیچ‌چیز ساختگی.
-            </h2>
-            <p className="text-balance text-base text-ink-muted">
+      {/* ── WIZARD ── */}
+      <section id="wizard" className="relative scroll-mt-20 py-24">
+        <Starfield count={45} />
+        <div className="relative mx-auto max-w-5xl px-6">
+          <Reveal className="mb-12 text-center">
+            <p className="mb-3 text-[11px] font-bold tracking-[.25em] text-gold/70">همین حالا امتحان کن</p>
+            <h2 className="mb-4 text-balance text-3xl font-extrabold md:text-4xl">خورشیدت کجاست؟</h2>
+            <p className="mx-auto max-w-lg text-balance text-sm leading-loose text-cream/55">
+              چهار سؤال. تبدیل شمسی به میلادی خودکار است.
+              محاسبه روی همین دستگاه انجام می‌شود — هیچ اطلاعاتی ارسال نمی‌کنیم.
+            </p>
+          </Reveal>
+
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_auto]">
+            <Reveal delay={100}><BirthWizard /></Reveal>
+            <Reveal delay={220} className="hidden lg:block">
+              <Orbits className="h-[360px] w-[360px]" />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOUR DOORS ── */}
+      <section className="relative border-y border-white/[.07] bg-white/[.015] py-24">
+        <div className="mx-auto max-w-5xl px-6">
+          <Reveal className="mb-14 text-center">
+            <p className="mb-3 text-[11px] font-bold tracking-[.25em] text-gold/70">چهار سنّت</p>
+            <h2 className="mb-4 text-balance text-3xl font-extrabold md:text-4xl">هرچه لازم داری — هیچ‌چیز ساختگی</h2>
+            <p className="mx-auto max-w-lg text-balance text-sm leading-loose text-cream/55">
               هر فال نشان می‌دهد از کدام سنّت آمده و با چه روشی محاسبه شده است.
             </p>
-          </div>
+          </Reveal>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {doors.map((d) => (
-              <Link
-                key={d.title}
-                href={d.href}
-                className="group rounded-xl border border-border bg-paper p-6 transition-colors hover:border-ink-muted"
-              >
-                <div className="mb-4 flex items-start justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-paper-2">
-                    {d.icon}
+            {DOORS.map((d, i) => {
+              const Icon = d.icon;
+              return (
+                <Reveal key={d.t} delay={i * 90}>
+                  <Link href={d.href} className="group relative block overflow-hidden rounded-2xl border border-white/[.09] bg-white/[.03] p-7 transition-all duration-500 hover:-translate-y-1 hover:border-gold/45">
+                    <div aria-hidden className="pointer-events-none absolute -left-16 -top-16 h-40 w-40 rounded-full bg-gold/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
+                    <div className="relative">
+                      <div className="mb-5 flex items-start justify-between">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gold/25 bg-gold/[.07] transition-transform duration-500 group-hover:scale-110">
+                          <Icon className="h-5 w-5 text-gold" />
+                        </div>
+                        <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-0.5 text-[11px] font-bold text-emerald-300">رایگان</span>
+                      </div>
+                      <h3 className="mb-2 text-xl font-extrabold">{d.t}</h3>
+                      <p className="mb-5 text-sm leading-loose text-cream/55">{d.d}</p>
+                      <div className="flex items-center justify-between border-t border-white/[.07] pt-4">
+                        <span className="text-xs text-cream/35">{d.m}</span>
+                        <span className="text-sm font-bold text-gold transition-transform group-hover:-translate-x-1">شروع ←</span>
+                      </div>
+                    </div>
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TAROT ── */}
+      <section className="relative py-24">
+        <Starfield count={35} />
+        <div className="relative mx-auto max-w-3xl px-6 text-center">
+          <Reveal>
+            <p className="mb-3 text-[11px] font-bold tracking-[.25em] text-gold/70">فال تاروت</p>
+            <h2 className="mb-10 text-balance text-3xl font-extrabold md:text-4xl">نیت کن، یک کارت بردار</h2>
+          </Reveal>
+          <Reveal delay={120}><TarotFlip /></Reveal>
+        </div>
+      </section>
+
+      {/* ── MOON ── */}
+      <section className="relative border-y border-white/[.07] bg-white/[.015] py-20">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <Reveal>
+            <p className="mb-3 text-[11px] font-bold tracking-[.25em] text-gold/70">چرخه‌ی ماه</p>
+            <h2 className="mb-10 text-balance text-2xl font-extrabold md:text-3xl">ماه هر {faNum("29.5")} روز دور می‌زند</h2>
+          </Reveal>
+          <Reveal delay={120}><MoonPhases /></Reveal>
+        </div>
+      </section>
+
+      {/* ── PROMISES ── */}
+      <section className="relative py-24">
+        <div className="mx-auto max-w-4xl px-6">
+          <Reveal className="mb-14 text-center">
+            <p className="mb-3 text-[11px] font-bold tracking-[.25em] text-gold/70">قول ما</p>
+            <h2 className="text-balance text-3xl font-extrabold md:text-4xl">چرا پشت خورشید</h2>
+          </Reveal>
+          <div className="grid gap-x-10 gap-y-9 md:grid-cols-2">
+            {PROMISES.map((p, i) => {
+              const Icon = p.i;
+              return (
+                <Reveal key={p.t} delay={i * 80}>
+                  <div className="flex gap-4">
+                    <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gold/25 bg-gold/[.07]">
+                      <Icon className="h-4 w-4 text-gold" />
+                    </div>
+                    <div>
+                      <h3 className="mb-1.5 font-extrabold">{p.t}</h3>
+                      <p className="text-sm leading-loose text-cream/55">{p.d}</p>
+                    </div>
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
-                    رایگان
-                  </span>
-                </div>
-                <h3 className="mb-1.5 text-lg font-bold">{d.title}</h3>
-                <p className="mb-4 text-sm leading-loose text-ink-muted">{d.body}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-ink-muted">{d.meta}</span>
-                  <span className="text-sm font-semibold text-ink transition-transform group-hover:-translate-x-0.5">
-                    شروع ←
-                  </span>
-                </div>
-              </Link>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="bg-paper py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight">چطور کار می‌کند</h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              { n: 1, t: "اطلاعاتت را وارد کن", d: "تاریخ، ساعت و شهر تولد. برای فال حافظ فقط یک نیت کافی‌ست." },
-              { n: 2, t: "محاسبه انجام می‌شود", d: "با داده‌های نجومی واقعی — نه متن آماده‌ی از پیش نوشته‌شده." },
-              { n: 3, t: "با منبع می‌خوانی", d: "هر بخش می‌گوید از کجا آمده و چگونه به دست آمده است." },
-            ].map((s) => (
-              <div key={s.n}>
-                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-full border-2 border-gold text-sm font-bold text-gold">
-                  {fa(s.n)}
-                </div>
-                <h3 className="mb-2 text-base font-bold">{s.t}</h3>
-                <p className="text-sm leading-loose text-ink-muted">{s.d}</p>
-              </div>
-            ))}
-          </div>
+      {/* ── CTA ── */}
+      <section className="relative overflow-hidden border-t border-white/[.07] py-28">
+        <Starfield count={60} />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 animate-glow rounded-full bg-gold/[.09] blur-3xl" />
+        <div className="relative mx-auto max-w-2xl px-6 text-center">
+          <Reveal>
+            <h2 className="mb-5 text-balance text-3xl font-extrabold leading-tight md:text-5xl md:leading-tight">
+              چارتت همین‌جا منتظر است.
+            </h2>
+            <p className="mb-9 text-balance leading-loose text-cream/60">
+              بدون کارت. بدون شماره تلفن. فقط طالع‌بینی واقعی، آن‌طور که باید باشد.
+            </p>
+            <a href="#wizard" className="inline-block rounded-xl bg-gradient-to-l from-gold to-pale-gold px-10 py-4 text-sm font-bold text-night shadow-xl transition-transform hover:scale-105">
+              شروع کن — رایگان
+            </a>
+            <p className="mt-6 text-xs text-cream/35">رونمایی کامل در شب یلدا {faNum(1405)}</p>
+          </Reveal>
         </div>
       </section>
 
-      {/* Promises */}
-      <section className="border-y border-border bg-white py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <div className="mb-12 text-center">
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gold">قول ما</p>
-            <h2 className="text-3xl font-bold tracking-tight">چرا پشت خورشید</h2>
-          </div>
-          <div className="grid gap-x-10 gap-y-8 md:grid-cols-2">
-            {promises.map((p) => (
-              <div key={p.t} className="flex gap-4">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-paper-2 text-gold">
-                  {p.icon}
-                </div>
-                <div>
-                  <h3 className="mb-1 text-base font-bold">{p.t}</h3>
-                  <p className="text-sm leading-loose text-ink-muted">{p.d}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-ink py-20 text-white">
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <h2 className="mb-4 text-balance text-3xl font-bold leading-tight tracking-tight md:text-5xl md:leading-tight">
-            با چارت تولد رایگانت شروع کن.
-          </h2>
-          <p className="mb-8 text-balance text-base leading-relaxed text-white/70">
-            بدون کارت. بدون شماره تلفن. فقط طالع‌بینی واقعی، آن‌طور که باید باشد.
-          </p>
-          <Link
-            href="/astrology/birth-chart"
-            className="inline-block rounded-lg bg-white px-8 py-4 text-sm font-bold text-ink transition-colors hover:bg-white/90"
-          >
-            چارت رایگانم را بگیر ←
-          </Link>
-          <p className="mt-5 text-sm text-white/50">
-            رایگان همیشگی · رونمایی در شب یلدا {fa(1405)}
-          </p>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[#0F0F0F] py-10 text-sm text-white/50">
+      {/* ── FOOTER ── */}
+      <footer className="relative border-t border-white/[.07] bg-night py-12 text-sm text-cream/40">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex flex-wrap items-center justify-between gap-5">
             <div className="flex items-center gap-2.5">
-              <div className="h-4 w-4 rounded-full border border-white/40" />
+              <div className="h-4 w-4 rounded-full border border-gold/50" />
               <span>پشت خورشید · ساخته‌شده در تورنتو</span>
             </div>
             <div className="flex flex-wrap gap-6">
-              <Link href="/about" className="hover:text-white/80">درباره‌ی ما</Link>
-              <Link href="/privacy" className="hover:text-white/80">حریم خصوصی</Link>
-              <Link href="/terms" className="hover:text-white/80">شرایط استفاده</Link>
-              <Link href="/contact" className="hover:text-white/80">تماس</Link>
+              {[["درباره‌ی ما","/about"],["حریم خصوصی","/privacy"],["شرایط استفاده","/terms"],["تماس","/contact"]].map(([t,h]) => (
+                <Link key={h} href={h} className="transition-colors hover:text-gold">{t}</Link>
+              ))}
             </div>
           </div>
-          <p className="mt-7 border-t border-white/10 pt-6 text-xs leading-loose text-white/35">
+          <p className="mt-8 border-t border-white/[.07] pt-6 text-xs leading-loose text-cream/25">
             پشت خورشید ابزاری برای تأمل و خودشناسی‌ست. محتوای این سایت جایگزین
             مشاوره‌ی پزشکی، روان‌شناختی، حقوقی یا مالی نیست.
           </p>

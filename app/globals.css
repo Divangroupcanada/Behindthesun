@@ -3,21 +3,28 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
-  }
-  body {
-    @apply bg-paper text-ink antialiased;
-    font-feature-settings: "ss01";
-  }
-  /* Persian numerals everywhere by default */
-  .num-fa {
-    font-variant-numeric: normal;
-  }
+  html { font-family: "Vazirmatn", ui-sans-serif, system-ui, sans-serif; }
+  body { @apply bg-night text-cream antialiased; overflow-x: hidden; }
+  ::selection { background: #B8862F; color: #0E0816; }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .text-balance { text-wrap: balance; }
+  .gold-text {
+    background: linear-gradient(100deg,#B8862F,#E8C77A,#F4E4B8,#E8C77A,#B8862F);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+  .glass { @apply border border-white/10 bg-white/[0.04] backdrop-blur-xl; }
+  .halo { box-shadow: 0 0 60px -12px rgba(184,134,47,.55); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
   }
 }

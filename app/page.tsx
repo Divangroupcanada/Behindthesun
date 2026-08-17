@@ -6,21 +6,16 @@ import Orbits from "@/components/Orbits";
 import Reveal from "@/components/Reveal";
 import BirthWizard from "@/components/BirthWizard";
 import TarotFlip from "@/components/TarotFlip";
-import MoonPhases from "@/components/MoonPhases";
+import TodaySky from "@/components/TodaySky";
 import { faNum } from "@/lib/astro";
+
+export const revalidate = 1800;
 
 const DOORS = [
   { icon: Circle, t: "چارت تولد", d: "نقشه‌ی کامل آسمان لحظه‌ی تولدت — همه‌ی سیارات، خانه‌ها و زوایا.", m: `${faNum(3)} دقیقه`, href: "/astrology/birth-chart" },
   { icon: BookOpen, t: "فال حافظ", d: "غزلی از دیوان حافظ با متن اصل و تفسیر — نسخه‌ی قزوینی‌-غنی.", m: `${faNum(90)} ثانیه`, href: "/hafez" },
   { icon: Sparkles, t: "فال تاروت", d: "کارتی از دسته‌ی رایدر-ویت-اسمیت، با نمادشناسی و پرسش‌های تأمل.", m: `${faNum(2)} دقیقه`, href: "/tarot/daily" },
   { icon: Hash, t: "عدد مسیر زندگی", d: "عددت بر پایه‌ی تقلیل فیثاغورثی، با توضیح کاملِ روش محاسبه.", m: `${faNum(60)} ثانیه`, href: "/numerology/life-path" },
-];
-
-const SKY = [
-  { p: "خورشید", s: "اسد", g: "☀" }, { p: "ماه", s: "میزان", g: "☾" },
-  { p: "عطارد", s: "اسد", g: "☿" }, { p: "زهره", s: "میزان", g: "♀" },
-  { p: "مریخ", s: "سرطان", g: "♂" }, { p: "مشتری", s: "اسد", g: "♃" },
-  { p: "زحل", s: "حمل", g: "♄" },
 ];
 
 const PROMISES = [
@@ -89,22 +84,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── TODAY'S SKY ── */}
-      <section className="relative border-y border-white/[.07] bg-white/[.02] py-6">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="mb-4 text-center text-[11px] font-bold tracking-[.25em] text-gold/70">امروز در آسمان</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            {SKY.map((x) => (
-              <div key={x.p} className="flex items-baseline gap-2 text-sm">
-                <span className="text-base text-gold/80">{x.g}</span>
-                <span className="font-semibold text-cream/85">{x.p}</span>
-                <span className="text-cream/35">در</span>
-                <span className="text-pale-gold">{x.s}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TodaySky />
 
       {/* ── WIZARD ── */}
       <section id="wizard" className="relative scroll-mt-20 py-24">
@@ -177,17 +157,6 @@ export default function Home() {
             <h2 className="mb-10 text-balance text-3xl font-extrabold md:text-4xl">نیت کن، یک کارت بردار</h2>
           </Reveal>
           <Reveal delay={120}><TarotFlip /></Reveal>
-        </div>
-      </section>
-
-      {/* ── MOON ── */}
-      <section className="relative border-y border-white/[.07] bg-white/[.015] py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <Reveal>
-            <p className="mb-3 text-[11px] font-bold tracking-[.25em] text-gold/70">چرخه‌ی ماه</p>
-            <h2 className="mb-10 text-balance text-2xl font-extrabold md:text-3xl">ماه هر {faNum("29.5")} روز دور می‌زند</h2>
-          </Reveal>
-          <Reveal delay={120}><MoonPhases /></Reveal>
         </div>
       </section>
 

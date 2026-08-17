@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import ChartWheel from "./ChartWheel";
+import Interpretation from "./Interpretation";
 import { searchCities, type City } from "@/lib/engine/cities";
 import { formatFa, faNum, place } from "@/lib/engine/zodiac";
 
@@ -116,6 +117,8 @@ export default function ChartBuilder() {
             ))}
           </div>
         </div>
+
+        <Interpretation bodies={c.bodies} ascSignFa={c.ascendant?.sign.fa ?? null} />
 
         <button onClick={() => { setData(null); setStep(0); }}
           className="mx-auto block text-sm text-cream/40 hover:text-cream/70">چارت دیگری بساز</button>
